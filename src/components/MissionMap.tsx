@@ -44,27 +44,20 @@ function source(meta: (typeof layers)[number]) {
 export default function MissionMap({ mission }: { mission: Mission }) {
   const target = useRef<HTMLDivElement>(null),
     mapRef = useRef<Map | null>(null);
-  const regional =
-    mission.id === 'perseverance'
-      ? layers[1]
-      : mission.id === 'curiosity'
-        ? layers[2]
-        : undefined;
-  const mapLongitude =
-    mission.coordinates[0] > 180 ? mission.coordinates[0] - 360 : mission.coordinates[0];
-  const [mode, setMode] = useState<'regional' | 'global'>(regional ? 'regional' : 'global'),
+  const hasRegional = mission.id === 'perseverance' || mission.id === 'curiosity';
+  const [mode, setMode] = useState<'regional' | 'global'>(hasRegional ? 'regional' : 'global'),
     [status, setStatus] = useState('Loading NASA imagery…'),
     [retry, setRetry] = useState(0);
+  const regional = layers[mission.id === 'perseverance' ? 1 : hasRegional ? 2 : 0];
   const label =
     mission.id === 'perseverance' ? 'MRO HiRISE · Jezero mosaic' : 'MRO CTX · Gale mosaic';
   useEffect(() => {
     let disposed = false,
       failed = false;
     setStatus('Loading NASA imagery…');
-    const mapCoordinates: [number, number] = [mapLongitude, mission.coordinates[1]];
     const base = source(layers[0]),
-      detail = regional ? source(regional) : null,
-      active = mode === 'regional' && detail ? detail : base;
+      detail = source(regional),
+      active = mode === 'regional' ? detail : base;
     active.on('tileloadend', () => {
       if (!disposed && !failed) setStatus('NASA imagery loaded');
     });
@@ -82,7 +75,7 @@ export default function MissionMap({ mission }: { mission: Mission }) {
             : s,
         );
     }, 15000);
-    const pin = new Feature(new Point(mapCoordinates));
+    const pin = new Feature(new Point(mission.coordinates));
     pin.setStyle(
       new Style({
         image: new Circle({
@@ -103,16 +96,16 @@ export default function MissionMap({ mission }: { mission: Mission }) {
       target: target.current!,
       layers: [
         new TileLayer({ source: base }),
-        ...(mode === 'regional' && detail && regional
+        ...(mode === 'regional'
           ? [new TileLayer({ source: detail, extent: regional.extent })]
           : []),
         new VectorLayer({ source: new VectorSource({ features: [pin] }) }),
       ],
       view: new View({
         projection,
-        center: mapCoordinates,
+        center: mission.coordinates,
         resolution: mode === 'global' ? 0.02 : mission.id === 'perseverance' ? 0.0006 : 0.0025,
-        minResolution: 360 / (256 * 2 ** ((regional?.maxZoom ?? 7) + 1)),
+        minResolution: 360 / (256 * 2 ** (regional.maxZoom + 1)),
         maxResolution: 0.7,
       }),
     });
@@ -123,30 +116,27 @@ export default function MissionMap({ mission }: { mission: Mission }) {
       map.setTarget(undefined);
       mapRef.current = null;
     };
-  }, [mission, mapLongitude, mode, regional, retry]);
+  }, [mission, mode, regional, retry]);
   return (
     <section className="orbital-map" aria-label="Orbital imagery">
       <div className="map-toolbar">
         <div>
           <p className="eyebrow">ORBITAL ATLAS</p>
-          <strong>
-            {mode === 'regional' && regional ? label : 'Viking · Global color mosaic'}
-          </strong>
+          <strong>{mode === 'regional' ? label : 'Viking · Global color mosaic'}</strong>
         </div>
         <div className="map-controls">
           <label>
             Imagery{' '}
             <select value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
-              {regional && <option value="regional">Regional detail</option>}
+              <option value="regional" disabled={!hasRegional}>
+                Regional detail
+              </option>
               <option value="global">Global color</option>
             </select>
           </label>
           <button
             onClick={() =>
-              mapRef.current?.getView().animate({
-                center: [mapLongitude, mission.coordinates[1]],
-                duration: 400,
-              })
+              mapRef.current?.getView().animate({ center: mission.coordinates, duration: 400 })
             }
           >
             Recenter

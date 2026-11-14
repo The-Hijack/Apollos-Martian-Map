@@ -121,43 +121,4 @@ export const explorations: Record<string, Exploration[]> = {
       source: 'https://www.jpl.nasa.gov/videos/curiosity-at-martian-scenic-overlook/',
     },
   ],
-  spirit: [
-    {
-      name: 'Gusev plains',
-      focus: 'Volcanic terrain',
-      summary:
-        'Spirit examined basaltic rocks across the plains inside Gusev Crater, a large impact basin filled with volcanic materials.',
-      source: 'https://science.nasa.gov/mission/mer-spirit/',
-    },
-    {
-      name: 'Columbia Hills',
-      focus: 'Water-altered rocks',
-      summary:
-        'The hills revealed a diverse collection of rocks, including evidence that some materials had been altered by water.',
-      source: 'https://science.nasa.gov/mission/mer-spirit/',
-    },
-    {
-      name: 'Home Plate',
-      focus: 'Silica and volcanism',
-      summary:
-        'A silica-rich deposit uncovered by Spirit’s dragging wheel is consistent with formation in a past hot-spring or steam-vent environment.',
-      source: 'https://science.nasa.gov/mission/mer-spirit/',
-    },
-  ],
-  opportunity: [
-    {
-      name: 'Eagle Crater',
-      focus: 'Water-altered rocks',
-      summary:
-        'At its landing site, Opportunity examined layered outcrops and small hematite-rich spheres that helped establish a history of water at Meridiani Planum.',
-      source: 'https://science.nasa.gov/mission/mer-opportunity/',
-    },
-    {
-      name: 'Endurance Crater',
-      focus: 'Layered outcrops',
-      summary:
-        'Rocks exposed along the crater’s walls let scientists investigate changes in the region’s ancient watery environment.',
-      source: 'https://science.nasa.gov/mission/mer-opportunity/',
-    },
-  ],
 };

@@ -22,28 +22,6 @@ export const missions: Mission[] = [
     topics: ['Sedimentary layers', 'Ancient environments', 'Mount Sharp'],
     source: 'https://science.nasa.gov/mission/msl-curiosity/',
   },
-  {
-    id: 'spirit',
-    name: 'Spirit',
-    region: 'Gusev Crater',
-    landingYear: 2004,
-    coordinates: [175.4729, -14.5692],
-    description:
-      'Investigate Gusev’s volcanic plains and Columbia Hills for rocks and soils altered by ancient water, including silica-rich deposits.',
-    topics: ['Volcanic terrain', 'Water-altered rocks', 'Columbia Hills'],
-    source: 'https://science.nasa.gov/mission/mer-spirit/',
-  },
-  {
-    id: 'opportunity',
-    name: 'Opportunity',
-    region: 'Meridiani Planum',
-    landingYear: 2004,
-    coordinates: [354.47417, -1.9483],
-    description:
-      'Explore Meridiani Planum’s craters and rock outcrops for mineral and sedimentary evidence of past water on Mars.',
-    topics: ['Ancient water', 'Crater geology', 'Rock outcrops'],
-    source: 'https://science.nasa.gov/mission/mer-opportunity/',
-  },
 ];
 export const resources = [
   {
@@ -72,3 +50,9 @@ export const resources = [
     url: 'https://mars.nasa.gov/mars2020/multimedia/raw-images/',
   },
 ];
+import { explorations } from './exploration';
+import { insightExplorations, insightMission } from './insight';
+import { viking1Explorations, viking1Mission } from './viking1';
+missions.push(insightMission, viking1Mission);
+explorations.insight = insightExplorations;
+explorations.viking1 = viking1Explorations;

@@ -65,30 +65,26 @@ export default function ExplorationContent({
           <MediaCard item={items[0]} />
         ) : (
           <p>
-            The orbital map above provides regional context. A measured, hazard-aware route is not
-            connected yet.
+            The map above provides orbital context. A measured, hazard-aware route is not connected
+            yet.
           </p>
         )}
       </section>
     );
   return (
     <section className="exploration-library">
-      {items.length > 0 && (
-        <>
-          <div className="library-heading">
-            <div>
-              <p className="eyebrow">MISSION EVIDENCE</p>
-              <h3>Explore the actual landscape.</h3>
-            </div>
-            <span>{items.length} sourced visuals</span>
-          </div>
-          <div className={`media-grid ${missionId === 'curiosity' ? 'single' : ''}`}>
-            {items.map((item) => (
-              <MediaCard key={item.id} item={item} />
-            ))}
-          </div>
-        </>
-      )}
+      <div className="library-heading">
+        <div>
+          <p className="eyebrow">MISSION EVIDENCE</p>
+          <h3>Explore the actual landscape.</h3>
+        </div>
+        <span>{items.length} sourced visuals</span>
+      </div>
+      <div className={`media-grid ${missionId === 'curiosity' ? 'single' : ''}`}>
+        {items.map((item) => (
+          <MediaCard key={item.id} item={item} />
+        ))}
+      </div>
       <div className="library-heading">
         <div>
           <p className="eyebrow">EXPLORATION STARTER CATALOG</p>
