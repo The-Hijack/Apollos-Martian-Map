@@ -22,6 +22,28 @@ export const missions: Mission[] = [
     topics: ['Sedimentary layers', 'Ancient environments', 'Mount Sharp'],
     source: 'https://science.nasa.gov/mission/msl-curiosity/',
   },
+  {
+    id: 'pathfinder',
+    name: 'Pathfinder / Sojourner',
+    region: 'Ares Vallis',
+    landingYear: 1997,
+    coordinates: [-33.22, 19.13],
+    description:
+      'Explore the rock-strewn Ares Vallis floodplain, where rounded cobbles, varied rocks, and windblown soil preserve clues to ancient catastrophic floods.',
+    topics: ['Ancient floodplain', 'Rocks and cobbles', 'Flood-deposited terrain'],
+    source: 'https://science.nasa.gov/mission/mars-pathfinder/',
+  },
+  {
+    id: 'phoenix',
+    name: 'Phoenix',
+    region: 'Vastitas Borealis · Northern Polar Plains',
+    landingYear: 2008,
+    coordinates: [-125.75, 68.22],
+    description:
+      'Investigate the arctic plains where Phoenix exposed near-surface water ice, analyzed soil chemistry, and measured polar weather.',
+    topics: ['Subsurface water ice', 'Polar soil chemistry', 'Arctic weather and frost'],
+    source: 'https://science.nasa.gov/mission/mars-phoenix/',
+  },
 ];
 export const resources = [
   {
