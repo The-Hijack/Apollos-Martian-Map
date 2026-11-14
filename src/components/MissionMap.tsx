@@ -44,10 +44,11 @@ function source(meta: (typeof layers)[number]) {
 export default function MissionMap({ mission }: { mission: Mission }) {
   const target = useRef<HTMLDivElement>(null),
     mapRef = useRef<Map | null>(null);
-  const [mode, setMode] = useState<'regional' | 'global'>('regional'),
+  const hasRegional = mission.id === 'perseverance' || mission.id === 'curiosity';
+  const [mode, setMode] = useState<'regional' | 'global'>(hasRegional ? 'regional' : 'global'),
     [status, setStatus] = useState('Loading NASA imagery…'),
     [retry, setRetry] = useState(0);
-  const regional = layers[mission.id === 'perseverance' ? 1 : 2];
+  const regional = layers[mission.id === 'perseverance' ? 1 : hasRegional ? 2 : 0];
   const label =
     mission.id === 'perseverance' ? 'MRO HiRISE · Jezero mosaic' : 'MRO CTX · Gale mosaic';
   useEffect(() => {
@@ -127,7 +128,9 @@ export default function MissionMap({ mission }: { mission: Mission }) {
           <label>
             Imagery{' '}
             <select value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
-              <option value="regional">Regional detail</option>
+              <option value="regional" disabled={!hasRegional}>
+                Regional detail
+              </option>
               <option value="global">Global color</option>
             </select>
           </label>
