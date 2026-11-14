@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Apollos · Exploration workspace</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/">◈ <span>APOLLOS</span></a
+      ><span>EXPLORATION WORKSPACE / 01</span><b>LOCAL PROTOTYPE</b>
+    </header>
+    <main>
+      <div class="intro">
+        <p class="eyebrow">FROM ROBOTIC MISSIONS TO THE NEXT DISCOVERY</p>
+        <h1>Chart the next step.</h1>
+        <p>Explore mission heritage. Test terrain-aware routes. Record what comes next.</p>
+      </div>
+      <div class="workspace">
+        <aside>
+          <p class="eyebrow">01 / MISSION ARCHIVE</p>
+          <h2>Start with what we know.</h2>
+          <label for="search">Find a mission</label
+          ><input id="search" type="search" placeholder="Name or landing region" />
+          <div id="missions"></div>
+          <p class="muted">
+            Three seed surface missions. Approximate landing locations; not a complete catalog.
+          </p>
+        </aside>
+        <section class="maps">
+          <div class="panel">
+            <div class="panel-title">
+              <h2>Mars / landing atlas</h2>
+              <span>180° W → 180° E</span>
+            </div>
+            <svg
+              id="atlas"
+              viewBox="0 0 720 360"
+              role="img"
+              aria-label="Schematic latitude and longitude map of mission landing sites"
+            ></svg>
+            <p class="muted">
+              Schematic equirectangular map · latitude 90° N to 90° S · no surface imagery
+            </p>
+          </div>
+          <div class="panel">
+            <div class="panel-title">
+              <h2>Traverse sandbox</h2>
+              <span>SIMULATED TERRAIN</span>
+            </div>
+            <p>
+              Choose a destination cell. Start is the blue cell at (1, 1). Grid cells represent 100
+              m.
+            </p>
+            <div id="terrain" role="group" aria-label="Simulated terrain destination cells"></div>
+            <div class="legend">
+              <span>■ Low slope</span><span>▧ Steep terrain</span><span>● Planned route</span>
+            </div>
+            <p id="route-result" role="status"></p>
+          </div>
+        </section>
+        <aside>
+          <p class="eyebrow">02 / TRAVERSE SETTINGS</p>
+          <label for="slope">Maximum slope: <output id="slope-value">25</output>°</label
+          ><input id="slope" type="range" min="5" max="40" value="25" /><label for="risk"
+            >Hazard penalty</label
+          ><select id="risk">
+            <option value="0">Shortest traversable path</option>
+            <option value="3" selected>Balanced</option>
+            <option value="8">Favor lower hazards</option>
+          </select>
+          <p class="notice">
+            Demonstration only. Terrain is generated, not measured on Mars. Routes are not suitable
+            for astronaut navigation.
+          </p>
+          <hr />
+          <p class="eyebrow">03 / FIELD NOTEBOOK</p>
+          <h2>Log a discovery.</h2>
+          <form id="discovery">
+            <label for="title">Discovery title</label
+            ><input id="title" maxlength="100" required placeholder="Layered rock outcrop" /><label
+              for="latitude"
+              >Latitude (−90 to 90)</label
+            ><input id="latitude" type="number" min="-90" max="90" step="any" required /><label
+              for="longitude"
+              >Longitude (−180 to 180)</label
+            ><input id="longitude" type="number" min="-180" max="180" step="any" required /><label
+              for="notes"
+              >Observation</label
+            ><textarea id="notes" maxlength="2000" required></textarea
+            ><button type="submit">Save field note ↗</button>
+          </form>
+          <p id="save-status" role="status"></p>
+          <div id="discoveries"></div>
+          <button id="export" class="secondary">Export discoveries · GeoJSON</button>
+          <p class="muted">Saved in this browser only. Export to share or back up your notes.</p>
+        </aside>
+      </div>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
