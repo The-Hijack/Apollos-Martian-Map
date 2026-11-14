@@ -1,0 +1,35 @@
+[
+  {
+    "origin": [-180.0, 90.0],
+    "maxZoom": 7,
+    "id": "Mars_Viking_MDIM21_ClrMosaic_global_232m",
+    "tileSize": 256,
+    "capabilities": "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/WMTSCapabilities.xml",
+    "format": "image/jpeg",
+    "matrixWidths": [2, 4, 8, 16, 32, 64, 128, 256],
+    "extent": [-180.0, -90.0, 180.0, 90.0]
+  },
+  {
+    "origin": [-180.0, 90.0],
+    "maxZoom": 17,
+    "id": "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd",
+    "tileSize": 256,
+    "capabilities": "https://trek.nasa.gov/tiles/Mars/EQ/JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd/1.0.0/WMTSCapabilities.xml",
+    "format": "image/png",
+    "matrixWidths": [
+      2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072,
+      262144
+    ],
+    "extent": [77.2229331, 18.3067994, 77.583964, 18.669315]
+  },
+  {
+    "origin": [-180.0, 90.0],
+    "maxZoom": 12,
+    "id": "Gale_CTX_BlockAdj_dd",
+    "tileSize": 256,
+    "capabilities": "https://trek.nasa.gov/tiles/Mars/EQ/Gale_CTX_BlockAdj_dd/1.0.0/WMTSCapabilities.xml",
+    "format": "image/png",
+    "matrixWidths": [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192],
+    "extent": [135.1842593, -6.5732988, 139.2413012, -2.8077809]
+  }
+]
