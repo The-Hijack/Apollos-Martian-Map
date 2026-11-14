@@ -50,3 +50,9 @@ export const resources = [
     url: 'https://mars.nasa.gov/mars2020/multimedia/raw-images/',
   },
 ];
+import { explorations } from './exploration';
+import { insightExplorations, insightMission } from './insight';
+import { viking1Explorations, viking1Mission } from './viking1';
+missions.push(insightMission, viking1Mission);
+explorations.insight = insightExplorations;
+explorations.viking1 = viking1Explorations;

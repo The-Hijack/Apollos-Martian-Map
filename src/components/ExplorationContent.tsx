@@ -65,8 +65,8 @@ export default function ExplorationContent({
           <MediaCard item={items[0]} />
         ) : (
           <p>
-            The Jezero map above provides orbital context. A measured, hazard-aware route is not
-            connected yet.
+            The map above provides orbital context. A measured, hazard-aware route is not connected
+            yet.
           </p>
         )}
       </section>
