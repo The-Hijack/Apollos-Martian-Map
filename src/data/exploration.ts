@@ -71,58 +71,6 @@ export const media: Record<string, MediaRecord[]> = {
       kind: 'HISTORICAL ROUTE ANIMATION',
     },
   ],
-  pathfinder: [
-    {
-      id: 'sojourner-dice',
-      title: 'Sojourner among the Ares Vallis rocks',
-      src: '/media/pathfinder-sojourner-dice.jpg',
-      alt: 'Sojourner rover beside small rocks at the Pathfinder landing site',
-      caption:
-        'Pathfinder imaged Sojourner near the small rocks known as “The Dice” and the larger rock Yogi. The scene shows contrasting dark rocks, red dust, and rover tracks at the landing site.',
-      credit: 'NASA/JPL',
-      source: 'https://photojournal.jpl.nasa.gov/catalog/PIA01122',
-      date: '12 December 1997 · Pathfinder Sol 22',
-      kind: 'LANDER IMAGE',
-    },
-    {
-      id: 'ares-landforms',
-      title: 'Landforms in Ares Vallis',
-      src: '/media/ares-vallis-landforms.jpg',
-      alt: 'Orbital HiRISE view of ridge-like landforms on the floor of Ares Vallis',
-      caption:
-        'A later MRO/HiRISE view of Ares Vallis shows ridge-like landforms that may remain where flowing water stripped away surrounding material. This is regional orbital context, not a Pathfinder traverse image or a precisely georeferenced hazard layer.',
-      credit: 'NASA/JPL-Caltech/University of Arizona',
-      source: 'https://science.nasa.gov/photojournal/landforms-in-ares-vallis/',
-      date: '13 November 2020 · MRO HiRISE',
-      kind: 'ORBITAL TERRAIN',
-    },
-  ],
-  phoenix: [
-    {
-      id: 'phoenix-trenches',
-      title: 'Phoenix exposes ice beneath the soil',
-      src: '/media/phoenix-trench-ice.jpg',
-      alt: 'False-color Phoenix image of shallow trenches with bright subsurface ice exposed',
-      caption:
-        'Phoenix’s Surface Stereo Imager recorded bright ice beneath the soil in several shallow trenches. The false-color view shows the Upper Cupboard, Ice Man, and La Mancha trenches.',
-      credit: 'NASA/JPL-Caltech/University of Arizona/Texas A&M University',
-      source: 'https://science.nasa.gov/photojournal/phoenix-deepens-trenches-on-mars/',
-      date: '21 October 2008 · Phoenix Sol 145',
-      kind: 'LANDER IMAGE',
-    },
-    {
-      id: 'northern-ice-terrain',
-      title: 'Ice-shaped ground on the northern plains',
-      src: '/media/northern-plains-ice-terrain.jpg',
-      alt: 'HiRISE image of polygon-fractured northern Martian terrain shaped by ice',
-      caption:
-        'MRO/HiRISE shows polygonal fractures and shallow pits across ice-shaped northern terrain. Similar polygons were observed by Phoenix; this orbital scene provides wider polar context and is not presented as the exact landing-site surface.',
-      credit: 'NASA/JPL-Caltech/University of Arizona',
-      source: 'https://science.nasa.gov/photojournal/ice-rich-terrain-of-the-northern-plains/',
-      date: '16 April 2021 · MRO HiRISE',
-      kind: 'ORBITAL TERRAIN',
-    },
-  ],
 };
 export const explorations: Record<string, Exploration[]> = {
   perseverance: [
@@ -171,38 +119,6 @@ export const explorations: Record<string, Exploration[]> = {
       summary:
         'An overlook from which the mission documented its journey across Gale, including earlier stops, dunes and buttes.',
       source: 'https://www.jpl.nasa.gov/videos/curiosity-at-martian-scenic-overlook/',
-    },
-  ],
-  pathfinder: [
-    {
-      name: 'Ares Vallis floodplain',
-      focus: 'Ancient floods',
-      summary:
-        'Ares Vallis is an ancient outflow channel and floodplain. Pathfinder’s landing area contained a wide variety of rocks deposited by catastrophic floods, offering a close look at material transported across the valley.',
-      source: 'https://science.nasa.gov/mission/mars-pathfinder/',
-    },
-    {
-      name: 'The Dice and Yogi',
-      focus: 'Rocks and cobbles',
-      summary:
-        'Sojourner examined rocks at the landing site, including the small rocks called The Dice and the larger Yogi. Rounded pebbles and cobbles contributed to evidence for a warmer, wetter ancient Mars.',
-      source: 'https://photojournal.jpl.nasa.gov/catalog/PIA01122',
-    },
-  ],
-  phoenix: [
-    {
-      name: 'Ice-bearing trenches',
-      focus: 'Subsurface ice',
-      summary:
-        'Phoenix dug into an ice-rich layer beneath the surface soil. Bright material exposed in several trenches was identified as water ice, linking shallow ground conditions to the polar climate.',
-      source: 'https://science.nasa.gov/mission/mars-phoenix/',
-    },
-    {
-      name: 'Northern plains polygons',
-      focus: 'Polar soil and frost',
-      summary:
-        'Polygonal fractures across the northern plains form as near-surface ice expands and contracts through seasonal temperature cycles. Phoenix also measured the local weather and analyzed soil containing salts including perchlorate.',
-      source: 'https://science.nasa.gov/photojournal/ice-rich-terrain-of-the-northern-plains/',
     },
   ],
 };

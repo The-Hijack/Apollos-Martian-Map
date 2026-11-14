@@ -20,7 +20,7 @@ export default function App() {
         <aside className="sidebar">
           <p className="eyebrow">YOUR EXPLORATION AREAS</p>
           <h1>
-            Four missions.
+            Two missions.
             <br />A world to discover.
           </h1>
           <p className="subtle">Choose a mission to open its workspace.</p>
@@ -93,7 +93,7 @@ export default function App() {
                     <span>APPROXIMATE LANDING</span>
                     <strong>
                       {Math.abs(mission.coordinates[1])}° {mission.coordinates[1] < 0 ? 'S' : 'N'} /{' '}
-                      {Math.abs(mission.coordinates[0])}° {mission.coordinates[0] < 0 ? 'W' : 'E'}
+                      {mission.coordinates[0]}° E
                     </strong>
                   </div>
                   <p>Explore the sourced images and scientific areas below.</p>
