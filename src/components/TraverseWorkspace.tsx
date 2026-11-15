@@ -1,3 +1,4 @@
+import { downloadJson } from '../utils/downloadJson';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import MissionMap from './MissionMap';
 import terrain from '../data/jezero-terrain.json';
@@ -9,7 +10,7 @@ import {
 } from '../planning/navigation.js';
 import type { Mission } from '../types';
 import FieldNotebook from './FieldNotebook';
-import { readNotes } from '../planning/journal.js';
+import { readNotes, type FieldNote } from '../planning/journal.js';
 import { media, explorations } from '../data/exploration';
 import { hazardEvidence } from '../data/hazardEvidence';
 import {
@@ -27,7 +28,7 @@ const initialState = (): SimulationState => ({
   playing: false,
 });
 const minutes = (value: number) => Math.ceil(Math.max(0, value));
-export default function NavigationDemo({
+export default function TraverseWorkspace({
   mission,
   active = true,
 }: {
@@ -86,7 +87,7 @@ export default function NavigationDemo({
       return { notes: readNotes(localStorage, mission.id), error: '' };
     } catch {
       return {
-        notes: [] as import('../planning/journal.js').FieldNote[],
+        notes: [] as FieldNote[],
         error:
           'Saved notes could not be loaded. Browser storage may be blocked or damaged; existing records have not been overwritten.',
       };
@@ -171,8 +172,8 @@ export default function NavigationDemo({
       url: canvas.toDataURL(),
       extent: [
         terrain.originX / terrain.metersPerDegreeX,
-        (terrain.originY - terrain.height * 20) / terrain.metersPerDegreeY,
-        (terrain.originX + terrain.width * 20) / terrain.metersPerDegreeX,
+        (terrain.originY - terrain.height * terrain.resolutionMeters) / terrain.metersPerDegreeY,
+        (terrain.originX + terrain.width * terrain.resolutionMeters) / terrain.metersPerDegreeX,
         terrain.originY / terrain.metersPerDegreeY,
       ],
     };
@@ -514,7 +515,7 @@ export default function NavigationDemo({
                   <p>{objective?.summary ?? mission.description}</p>
                   <p>
                     <a href={objective?.source ?? mission.source} target="_blank" rel="noreferrer">
-                      Read the science evidence ↗
+                      Science source ↗
                     </a>
                   </p>
                   {briefingImage && (
@@ -536,7 +537,7 @@ export default function NavigationDemo({
                       </figcaption>
                     </figure>
                   )}
-                  <h3>Your field checklist</h3>
+                  <h3>Field checklist</h3>
                   <ul className="science-checklist">
                     <li>Describe visible surface features relevant to the selected objective.</li>
                     <li>Record observations and optional photos at simulated positions.</li>
@@ -546,7 +547,7 @@ export default function NavigationDemo({
                     Destination: {destinationLabel}.{' '}
                     {measured
                       ? 'Published study-site center near the depot, not a sample tube or the exact outcrop named above.'
-                      : 'Approximate mission landing coordinates; the exact science-feature location is not georeferenced. Choose a separate hypothetical base. This is a regional reconnaissance rehearsal.'}
+                      : 'Approximate landing location, not a verified science-feature location. Choose a separate base.'}
                   </p>
                   <button className="primary-action" onClick={() => goToStep(2)}>
                     Plan the route <span>→</span>
@@ -556,11 +557,11 @@ export default function NavigationDemo({
               {step === 2 && (
                 <>
                   <p className="eyebrow">LANDING BASE & TRAVEL</p>
-                  <h2>Make the round trip fit.</h2>
+                  <h2>Plan the round trip</h2>
                   <p>
                     {measured
-                      ? 'The default base is hypothetical, near Perseverance’s landing.'
-                      : 'Choose a hypothetical base distinct from this mission’s landing reference. Draw detour waypoints where needed; terrain clearance is not assessed.'}
+                      ? 'Set a proposed base near Perseverance’s landing.'
+                      : 'Choose a base, then add waypoints. Terrain clearance is unassessed.'}
                   </p>
                   <div className="base-coordinate">
                     {base[1].toFixed(5)}° N · {base[0].toFixed(5)}° E
@@ -793,7 +794,7 @@ export default function NavigationDemo({
               {step === 3 && (
                 <>
                   <p className="eyebrow">PRE-DEPARTURE REVIEW</p>
-                  <h2>A route is only part of the decision.</h2>
+                  <h2>Review your trip</h2>
                   <dl className="review-summary">
                     <div>
                       <dt>Destination</dt>
@@ -833,50 +834,35 @@ export default function NavigationDemo({
                       path.
                     </p>
                     <button
-                      onClick={() => {
-                        const blob = new Blob(
-                          [
-                            JSON.stringify(
-                              {
-                                mission: mission.id,
-                                objective: objective?.name,
-                                destination: destinationLabel,
-                                base,
-                                route: available ? route.path : null,
-                                routeModel: measured
-                                  ? 'measured-jezero-dem'
-                                  : 'manual-unassessed-terrain',
-                                exclusions: zoneState.zones,
-                                assumptions: {
-                                  speedKmh: speed,
-                                  enduranceMinutes: endurance,
-                                  reservePercent: 25,
-                                  scienceMinutes: 30,
-                                  contingencyMinutes: 30,
-                                },
-                                unresolved: [
-                                  'rocks',
-                                  'soil strength',
-                                  'lighting',
-                                  'radiation',
-                                  'communications',
-                                  'evacuation alternatives',
-                                ],
-                                evidence: hazardEvidence[mission.id] ?? [],
-                              },
-                              null,
-                              2,
-                            ),
+                      onClick={() =>
+                        downloadJson(`apollos-${mission.id}-route-review.json`, {
+                          mission: mission.id,
+                          objective: objective?.name,
+                          destination: destinationLabel,
+                          base,
+                          route: available ? route.path : null,
+                          routeModel: measured
+                            ? 'measured-jezero-dem'
+                            : 'manual-unassessed-terrain',
+                          exclusions: zoneState.zones,
+                          assumptions: {
+                            speedKmh: speed,
+                            enduranceMinutes: endurance,
+                            reservePercent: 25,
+                            scienceMinutes: 30,
+                            contingencyMinutes: 30,
+                          },
+                          unresolved: [
+                            'rocks',
+                            'soil strength',
+                            'lighting',
+                            'radiation',
+                            'communications',
+                            'evacuation alternatives',
                           ],
-                          { type: 'application/json' },
-                        );
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `apollos-${mission.id}-route-review.json`;
-                        a.click();
-                        setTimeout(() => URL.revokeObjectURL(url), 1000);
-                      }}
+                          evidence: hazardEvidence[mission.id] ?? [],
+                        })
+                      }
                     >
                       Export route review
                     </button>
@@ -942,15 +928,19 @@ export default function NavigationDemo({
                   </h2>
                   <p role="status">
                     {simulation.phase === 'arrived'
-                      ? 'The clock is paused. Record observations, account for your science stop, then return.'
+                      ? 'Paused at destination. Record discoveries and science time before returning.'
                       : simulation.phase === 'complete'
                         ? 'Review your observations and export the field notebook.'
                         : simulation.playing
-                          ? 'Simulated movement is running.'
-                          : 'Paused. Position and elapsed time are frozen.'}
+                          ? 'Simulation running.'
+                          : 'Simulation paused.'}
                   </p>
+                  <button className="primary-action" onClick={openNotebook}>
+                    {simulation.phase === 'complete' ? 'Open field notebook' : 'Record discovery'}{' '}
+                    <span>＋</span>
+                  </button>
                   <div className={`return-assessment ${returnMargin < 0 ? 'over' : ''}`}>
-                    <span>Return budget headroom</span>
+                    <span>Return time margin</span>
                     <strong>
                       {Math.floor(returnMargin)} <small>min</small>
                     </strong>
@@ -980,12 +970,6 @@ export default function NavigationDemo({
                       {simulation.playing ? 'Pause simulation' : 'Resume simulation'}
                     </button>
                   )}
-                  <button className="primary-action" onClick={openNotebook}>
-                    {simulation.phase === 'complete'
-                      ? 'Open field notebook'
-                      : 'Record an observation'}{' '}
-                    <span>＋</span>
-                  </button>
                   {simulation.phase === 'arrived' && (
                     <button
                       onClick={() =>

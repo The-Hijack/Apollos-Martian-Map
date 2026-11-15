@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import MissionMap from './components/MissionMap';
 import TraversePlanner from './components/TraversePlanner';
-import NavigationDemo from './components/NavigationDemo';
 import ExplorationContent from './components/ExplorationContent';
 import { missions, resources } from './data/missions';
 import MissionAtlas from './components/MissionAtlas';
 import './workflow.css';
 
+const TraverseWorkspace = lazy(() => import('./components/TraverseWorkspace'));
+
 export default function App() {
   const [screen, setScreen] = useState<'home' | 'explore' | 'library'>('home');
   const [activeMissionId, setActiveMissionId] = useState('perseverance');
   const [visited, setVisited] = useState<string[]>([]);
-  const [started, setStarted] = useState(false);
   const [manualOpen, setManualOpen] = useState(false);
   const [referenceId, setReferenceId] = useState('curiosity');
   useEffect(() => {
@@ -21,7 +21,6 @@ export default function App() {
   function begin(missionId = 'perseverance') {
     setActiveMissionId(missionId);
     setVisited((items) => (items.includes(missionId) ? items : [...items, missionId]));
-    setStarted(true);
     setScreen('explore');
   }
   return (
@@ -37,7 +36,7 @@ export default function App() {
           >
             Missions
           </button>
-          {started && (
+          {visited.length > 0 && (
             <button
               aria-current={screen === 'explore' ? 'page' : undefined}
               onClick={() => setScreen('explore')}
@@ -55,26 +54,31 @@ export default function App() {
         <span className="prototype-label">Research prototype</span>
       </div>
       {screen === 'home' && <MissionAtlas visited={visited} onBegin={begin} />}
-      {missions
-        .filter((item) => visited.includes(item.id))
-        .map((item) => (
-          <div key={item.id} hidden={screen !== 'explore' || activeMissionId !== item.id}>
-            <NavigationDemo
-              mission={item}
-              active={screen === 'explore' && activeMissionId === item.id}
-            />
-          </div>
-        ))}
+      <Suspense
+        fallback={
+          <p className="workspace-loading" role="status">
+            Loading mission planner…
+          </p>
+        }
+      >
+        {missions
+          .filter((item) => visited.includes(item.id))
+          .map((item) => (
+            <div key={item.id} hidden={screen !== 'explore' || activeMissionId !== item.id}>
+              <TraverseWorkspace
+                mission={item}
+                active={screen === 'explore' && activeMissionId === item.id}
+              />
+            </div>
+          ))}
+      </Suspense>
       {screen === 'library' && (
         <main className="reference-library">
           <div className="reference-heading">
             <div>
               <p className="eyebrow">SUPPORTING EVIDENCE</p>
               <h1>Mission library</h1>
-              <p>
-                Explore the team’s eight mission catalogs. Reference imagery is separate from
-                validated navigation data.
-              </p>
+              <p>Science records, imagery and source data for all eight missions.</p>
             </div>
             <label>
               Mission
@@ -90,7 +94,7 @@ export default function App() {
           <h2>{reference.region}</h2>
           <p>{reference.description}</p>
           <button className="primary-action" onClick={() => begin(reference.id)}>
-            Plan this mission exploration ↗
+            Plan exploration ↗
           </button>
           <MissionMap key={reference.id} mission={reference} />
           <ExplorationContent key={reference.id} missionId={reference.id} />
@@ -99,7 +103,7 @@ export default function App() {
             open={manualOpen}
             onToggle={(event) => setManualOpen(event.currentTarget.open)}
           >
-            <summary>Advanced manual route comparison</summary>
+            <summary>Compare manual routes</summary>
             <p>
               Draw your own candidates and compare resource assumptions. These paths do not use the
               Jezero terrain-routing model.
@@ -107,7 +111,7 @@ export default function App() {
             {manualOpen && <TraversePlanner key={reference.id} mission={reference} />}
           </details>
           <details className="library-tool">
-            <summary>NASA & USGS source library</summary>
+            <summary>Data sources</summary>
             <div className="source-links">
               {resources.map((resource) => (
                 <a key={resource.url} href={resource.url} target="_blank" rel="noreferrer">

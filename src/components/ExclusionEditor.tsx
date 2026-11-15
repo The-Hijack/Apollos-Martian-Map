@@ -59,13 +59,12 @@ export default function ExclusionEditor({
     <details className="exclusion-editor">
       <summary>No-go areas · {zones.length}</summary>
       <p>
-        Mark suspected rocks, sand, equipment or an area requiring inspection. Every boundary here
-        is a manual planning assumption, even when linked to a source; it is not a NASA-certified
-        hazard polygon.
+        Mark an area to avoid and record why. These are user-entered boundaries, not verified NASA
+        hazards.
       </p>
       <form onSubmit={add}>
         <button type="button" onClick={onPick}>
-          Pick exclusion center on map
+          Choose center on map
         </button>
         <label>
           Exclusion longitude
