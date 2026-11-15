@@ -1,6 +1,6 @@
-import { downloadJson } from '../utils/downloadJson';
+import { downloadJson } from '../../utils/downloadJson';
 import { useState, type FormEvent } from 'react';
-import { journalKey, saveNote, type FieldNote } from '../planning/journal.js';
+import { journalKey, saveNote, type FieldNote } from '../../planning/journal.js';
 export default function FieldNotebook({
   missionId,
   missionName,

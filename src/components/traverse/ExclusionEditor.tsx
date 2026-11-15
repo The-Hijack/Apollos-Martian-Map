@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { zoneError, type Exclusion } from '../planning/exclusions.js';
+import { zoneError, type Exclusion } from '../../planning/exclusions.js';
 export default function ExclusionEditor({
   missionId,
   zones,

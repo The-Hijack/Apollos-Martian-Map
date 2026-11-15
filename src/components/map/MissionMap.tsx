@@ -1,5 +1,5 @@
-import { zonePolygon, type Exclusion } from '../planning/exclusions.js';
-import { marsDistanceKm, MARS_RADIUS_KM, marsScalePixels } from '../planning/calculations.js';
+import { zonePolygon, type Exclusion } from '../../planning/exclusions.js';
+import { marsDistanceKm, MARS_RADIUS_KM, marsScalePixels } from '../../planning/calculations.js';
 import ImageLayer from 'ol/layer/Image';
 import ImageStatic from 'ol/source/ImageStatic';
 import LineString from 'ol/geom/LineString';
@@ -20,10 +20,10 @@ import Polygon from 'ol/geom/Polygon';
 import Select from 'ol/interaction/Select';
 import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
 import 'ol/ol.css';
-import layers from '../data/trek-layers.json';
-import { media } from '../data/exploration';
-import { pointsOfInterest, type PointOfInterest } from '../data/pointsOfInterest';
-import type { Mission } from '../types';
+import layers from '../../data/trek-layers.json';
+import { media } from '../../data/exploration';
+import { pointsOfInterest, type PointOfInterest } from '../../data/pointsOfInterest';
+import type { Mission } from '../../types';
 const regionalExperiences: Record<
   string,
   { layerId: string; label: string; heading: string; summary: string }

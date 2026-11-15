@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import MissionMap from './MissionMap';
+import MissionMap from '../map/MissionMap';
 import {
   evaluatePlan,
   validCoordinate,
   marsDistanceKm,
   type Assumptions,
-} from '../planning/calculations.js';
-import type { Mission } from '../types';
-import PlanningEvidence from './PlanningEvidence';
+} from '../../planning/calculations.js';
+import type { Mission } from '../../types';
+import PlanningEvidence from '../missions/PlanningEvidence';
 
 type Coordinate = [number, number];
 type Draft = {

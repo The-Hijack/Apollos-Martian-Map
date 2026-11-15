@@ -3,7 +3,7 @@ import type Geometry from 'ol/geom/Geometry';
 import MultiLineString from 'ol/geom/MultiLineString';
 import Point from 'ol/geom/Point';
 import { Fill, Stroke, Style, Text } from 'ol/style';
-import { marsDestination, marsDistanceKm, MARS_RADIUS_KM } from '../planning/calculations.js';
+import { marsDestination, marsDistanceKm, MARS_RADIUS_KM } from '../../planning/calculations.js';
 
 export function createDistanceGuides(origin: [number, number], extent: number[], density: string) {
   const features: Feature<Geometry>[] = [];

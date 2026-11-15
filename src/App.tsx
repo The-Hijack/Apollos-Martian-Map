@@ -1,12 +1,12 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import MissionMap from './components/MissionMap';
-import TraversePlanner from './components/TraversePlanner';
-import ExplorationContent from './components/ExplorationContent';
+import MissionMap from './components/map/MissionMap';
+import TraversePlanner from './components/traverse/TraversePlanner';
+import ExplorationContent from './components/missions/ExplorationContent';
 import { missions, resources } from './data/missions';
-import MissionAtlas from './components/MissionAtlas';
-import './workflow.css';
+import MissionAtlas from './components/missions/MissionAtlas';
+import './styles/workflow.css';
 
-const TraverseWorkspace = lazy(() => import('./components/TraverseWorkspace'));
+const TraverseWorkspace = lazy(() => import('./components/traverse/TraverseWorkspace'));
 
 export default function App() {
   const [screen, setScreen] = useState<'home' | 'explore' | 'library'>('home');

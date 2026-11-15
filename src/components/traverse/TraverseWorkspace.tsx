@@ -1,25 +1,27 @@
-import { downloadJson } from '../utils/downloadJson';
+import ObjectiveBriefing from './ObjectiveBriefing';
+import MissionEvidence from './MissionEvidence';
+import { downloadJson } from '../../utils/downloadJson';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import MissionMap from './MissionMap';
-import terrain from '../data/jezero-terrain.json';
+import MissionMap from '../map/MissionMap';
+import terrain from '../../data/jezero-terrain.json';
 import {
   terrainRoute,
   positionAt,
   advanceSimulation,
   type SimulationState,
-} from '../planning/navigation.js';
-import type { Mission } from '../types';
+} from '../../planning/navigation.js';
+import type { Mission } from '../../types';
 import FieldNotebook from './FieldNotebook';
-import { readNotes, type FieldNote } from '../planning/journal.js';
-import { media, explorations } from '../data/exploration';
-import { hazardEvidence } from '../data/hazardEvidence';
+import { readNotes, type FieldNote } from '../../planning/journal.js';
+import { media, explorations } from '../../data/exploration';
+import { hazardEvidence } from '../../data/hazardEvidence';
 import {
   loadZones,
   zonesKey,
   manualRoute,
   routeConflicts,
   type Exclusion,
-} from '../planning/exclusions.js';
+} from '../../planning/exclusions.js';
 import ExclusionEditor from './ExclusionEditor';
 const initialState = (): SimulationState => ({
   distanceKm: 0,
@@ -199,16 +201,6 @@ export default function TraverseWorkspace({
       30
     : 0;
   const coordinate = location?.coordinate;
-  const profile = available ? route.elevations : [];
-  const minimum = Math.min(...profile),
-    maximum = Math.max(...profile),
-    range = Math.max(1, maximum - minimum);
-  const profilePoints = profile
-    .map(
-      (elevation, index) =>
-        `${(index / (profile.length - 1)) * 700},${110 - ((elevation - minimum) / range) * 85}`,
-    )
-    .join(' ');
   const roundTripMinutes = available ? (route.totalKm / speed) * 120 + 60 : 0;
   const budgetFits = available && roundTripMinutes <= usableMinutes;
   const headings = [
@@ -391,87 +383,7 @@ export default function TraverseWorkspace({
                 : 'Click the map to add a detour waypoint before the destination.'}
             </p>
           )}
-          <details className="evidence-drawer">
-            <summary>Mission evidence, known cautions & data gaps</summary>
-            <h3>{mission.name}: evidence to consider</h3>
-            {(hazardEvidence[mission.id] ?? []).map((item) => (
-              <article key={item.source}>
-                <h4>{item.title}</h4>
-                <p>{item.detail}</p>
-                <a href={item.source} target="_blank" rel="noreferrer">
-                  NASA / JPL evidence ↗
-                </a>
-              </article>
-            ))}
-            <p>
-              Historical reports are not georeferenced obstacle boundaries. No verified rock or soil
-              hazard inventory is loaded for this region. Manual exclusions express your planning
-              assumptions, not detected hazards.
-            </p>
-            {measured ? (
-              <>
-                <p>
-                  Jezero routing uses measured 20 m elevation and derived slope. Unknown cells,
-                  over-limit slopes and manual exclusions are blocked. Exclusions are inflated by
-                  the cell half-diagonal to prevent cutting through them. Endpoints snap to cell
-                  centers.
-                </p>
-                <a href={terrain.source} target="_blank" rel="noreferrer">
-                  USGS elevation source ↗
-                </a>
-                <figure>
-                  <img
-                    src="/media/jezero-geology.png"
-                    alt="USGS geological map of Jezero and Nili Planum"
-                  />
-                  <figcaption>
-                    USGS SIM 3464: geological reference, not an aligned hazard layer.
-                  </figcaption>
-                </figure>
-              </>
-            ) : (
-              <p>
-                No verified local elevation grid is connected for this mission. Manual distances
-                omit height changes and unknown terrain detours.
-              </p>
-            )}
-            <p>
-              Lighting, radiation, communications, crew capability and alternative evacuation routes
-              remain unresolved for all missions.
-            </p>
-            <a
-              href={
-                measured
-                  ? 'https://www.hou.usra.edu/meetings/lpsc2023/pdf/2618.pdf'
-                  : mission.source
-              }
-              target="_blank"
-              rel="noreferrer"
-            >
-              Destination reference ↗
-            </a>
-            {measured && available && (
-              <>
-                <h4>Maximum modeled cell slope: {route.maxSlopeDegrees.toFixed(1)}°</h4>
-                <svg
-                  viewBox="0 0 720 140"
-                  role="img"
-                  aria-label={`Elevation from ${minimum.toFixed(0)} to ${maximum.toFixed(0)} meters along candidate`}
-                >
-                  <polyline
-                    points={profilePoints}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-                <p>
-                  Elevation {minimum.toFixed(0)} to {maximum.toFixed(0)} m in the source reference,
-                  samples ordered from base to destination.
-                </p>
-              </>
-            )}
-          </details>
+          <MissionEvidence mission={mission} measured={measured} route={available ? route : null} />
         </section>
         <aside className="task-panel" aria-label="Current exploration task">
           {notebook ? (
@@ -496,63 +408,17 @@ export default function TraverseWorkspace({
           ) : (
             <>
               {step === 1 && (
-                <>
-                  <p className="eyebrow">{mission.name.toUpperCase()} / SCIENCE TASK</p>
-                  <label>
-                    Exploration objective
-                    <select
-                      value={objectiveIndex}
-                      onChange={(event) => setObjectiveIndex(Number(event.target.value))}
-                    >
-                      {explorations[mission.id]?.map((item, index) => (
-                        <option key={item.name} value={index}>
-                          {item.name} · {item.focus}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <h2>{objective?.name ?? mission.name}</h2>
-                  <p>{objective?.summary ?? mission.description}</p>
-                  <p>
-                    <a href={objective?.source ?? mission.source} target="_blank" rel="noreferrer">
-                      Science source ↗
-                    </a>
-                  </p>
-                  {briefingImage && (
-                    <figure className="brief-image">
-                      <img
-                        src={
-                          briefingImage.src.endsWith('.gif')
-                            ? '/media/curiosity-route-still.jpg'
-                            : briefingImage.src
-                        }
-                        alt={briefingImage.alt}
-                      />
-                      <figcaption>
-                        {briefingImage.title} · {briefingImage.credit}. Regional reference; not
-                        assumed to show the selected point.{' '}
-                        <a href={briefingImage.source} target="_blank" rel="noreferrer">
-                          Source ↗
-                        </a>
-                      </figcaption>
-                    </figure>
-                  )}
-                  <h3>Field checklist</h3>
-                  <ul className="science-checklist">
-                    <li>Describe visible surface features relevant to the selected objective.</li>
-                    <li>Record observations and optional photos at simulated positions.</li>
-                    <li>Document uncertainties and update no-go areas before departure.</li>
-                  </ul>
-                  <p className="inline-warning">
-                    Destination: {destinationLabel}.{' '}
-                    {measured
-                      ? 'Published study-site center near the depot, not a sample tube or the exact outcrop named above.'
-                      : 'Approximate landing location, not a verified science-feature location. Choose a separate base.'}
-                  </p>
-                  <button className="primary-action" onClick={() => goToStep(2)}>
-                    Plan the route <span>→</span>
-                  </button>
-                </>
+                <ObjectiveBriefing
+                  mission={mission}
+                  objective={objective}
+                  briefingImage={briefingImage}
+                  objectives={explorations[mission.id] ?? []}
+                  objectiveIndex={objectiveIndex}
+                  setObjectiveIndex={setObjectiveIndex}
+                  measured={measured}
+                  destinationLabel={destinationLabel}
+                  onContinue={() => goToStep(2)}
+                />
               )}
               {step === 2 && (
                 <>
