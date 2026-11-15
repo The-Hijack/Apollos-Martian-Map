@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { missions } from '../data/missions';
-import { media } from '../data/exploration';
-import MissionMap from './MissionMap';
+import { missions } from '../../data/missions';
+import { media } from '../../data/exploration';
+import MissionMap from '../map/MissionMap';
 
 export default function MissionAtlas({
   visited,

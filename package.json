@@ -9,8 +9,9 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test prototype/routing.test.js src/planning/*.test.js src/data/*.test.js",
-    "format": "prettier --write src scripts README.md package.json index.html tsconfig.json .prettierrc.json",
-    "format:check": "prettier --check src scripts README.md package.json index.html tsconfig.json .prettierrc.json"
+    "format": "prettier --write src scripts docs reference/README.md README.md package.json index.html tsconfig.json .prettierrc.json",
+    "format:check": "prettier --check src scripts docs reference/README.md README.md package.json index.html tsconfig.json .prettierrc.json",
+    "check": "npm run format:check && npm test && npm run build"
   },
   "dependencies": {
     "ol": "^10.0.0",

@@ -1,24 +1,27 @@
+import ObjectiveBriefing from './ObjectiveBriefing';
+import MissionEvidence from './MissionEvidence';
+import { downloadJson } from '../../utils/downloadJson';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import MissionMap from './MissionMap';
-import terrain from '../data/jezero-terrain.json';
+import MissionMap from '../map/MissionMap';
+import terrain from '../../data/jezero-terrain.json';
 import {
   terrainRoute,
   positionAt,
   advanceSimulation,
   type SimulationState,
-} from '../planning/navigation.js';
-import type { Mission } from '../types';
+} from '../../planning/navigation.js';
+import type { Mission } from '../../types';
 import FieldNotebook from './FieldNotebook';
-import { readNotes } from '../planning/journal.js';
-import { media, explorations } from '../data/exploration';
-import { hazardEvidence } from '../data/hazardEvidence';
+import { readNotes, type FieldNote } from '../../planning/journal.js';
+import { media, explorations } from '../../data/exploration';
+import { hazardEvidence } from '../../data/hazardEvidence';
 import {
   loadZones,
   zonesKey,
   manualRoute,
   routeConflicts,
   type Exclusion,
-} from '../planning/exclusions.js';
+} from '../../planning/exclusions.js';
 import ExclusionEditor from './ExclusionEditor';
 const initialState = (): SimulationState => ({
   distanceKm: 0,
@@ -27,7 +30,7 @@ const initialState = (): SimulationState => ({
   playing: false,
 });
 const minutes = (value: number) => Math.ceil(Math.max(0, value));
-export default function NavigationDemo({
+export default function TraverseWorkspace({
   mission,
   active = true,
 }: {
@@ -86,7 +89,7 @@ export default function NavigationDemo({
       return { notes: readNotes(localStorage, mission.id), error: '' };
     } catch {
       return {
-        notes: [] as import('../planning/journal.js').FieldNote[],
+        notes: [] as FieldNote[],
         error:
           'Saved notes could not be loaded. Browser storage may be blocked or damaged; existing records have not been overwritten.',
       };
@@ -171,8 +174,8 @@ export default function NavigationDemo({
       url: canvas.toDataURL(),
       extent: [
         terrain.originX / terrain.metersPerDegreeX,
-        (terrain.originY - terrain.height * 20) / terrain.metersPerDegreeY,
-        (terrain.originX + terrain.width * 20) / terrain.metersPerDegreeX,
+        (terrain.originY - terrain.height * terrain.resolutionMeters) / terrain.metersPerDegreeY,
+        (terrain.originX + terrain.width * terrain.resolutionMeters) / terrain.metersPerDegreeX,
         terrain.originY / terrain.metersPerDegreeY,
       ],
     };
@@ -198,16 +201,6 @@ export default function NavigationDemo({
       30
     : 0;
   const coordinate = location?.coordinate;
-  const profile = available ? route.elevations : [];
-  const minimum = Math.min(...profile),
-    maximum = Math.max(...profile),
-    range = Math.max(1, maximum - minimum);
-  const profilePoints = profile
-    .map(
-      (elevation, index) =>
-        `${(index / (profile.length - 1)) * 700},${110 - ((elevation - minimum) / range) * 85}`,
-    )
-    .join(' ');
   const roundTripMinutes = available ? (route.totalKm / speed) * 120 + 60 : 0;
   const budgetFits = available && roundTripMinutes <= usableMinutes;
   const headings = [
@@ -390,87 +383,7 @@ export default function NavigationDemo({
                 : 'Click the map to add a detour waypoint before the destination.'}
             </p>
           )}
-          <details className="evidence-drawer">
-            <summary>Mission evidence, known cautions & data gaps</summary>
-            <h3>{mission.name}: evidence to consider</h3>
-            {(hazardEvidence[mission.id] ?? []).map((item) => (
-              <article key={item.source}>
-                <h4>{item.title}</h4>
-                <p>{item.detail}</p>
-                <a href={item.source} target="_blank" rel="noreferrer">
-                  NASA / JPL evidence ↗
-                </a>
-              </article>
-            ))}
-            <p>
-              Historical reports are not georeferenced obstacle boundaries. No verified rock or soil
-              hazard inventory is loaded for this region. Manual exclusions express your planning
-              assumptions, not detected hazards.
-            </p>
-            {measured ? (
-              <>
-                <p>
-                  Jezero routing uses measured 20 m elevation and derived slope. Unknown cells,
-                  over-limit slopes and manual exclusions are blocked. Exclusions are inflated by
-                  the cell half-diagonal to prevent cutting through them. Endpoints snap to cell
-                  centers.
-                </p>
-                <a href={terrain.source} target="_blank" rel="noreferrer">
-                  USGS elevation source ↗
-                </a>
-                <figure>
-                  <img
-                    src="/media/jezero-geology.png"
-                    alt="USGS geological map of Jezero and Nili Planum"
-                  />
-                  <figcaption>
-                    USGS SIM 3464: geological reference, not an aligned hazard layer.
-                  </figcaption>
-                </figure>
-              </>
-            ) : (
-              <p>
-                No verified local elevation grid is connected for this mission. Manual distances
-                omit height changes and unknown terrain detours.
-              </p>
-            )}
-            <p>
-              Lighting, radiation, communications, crew capability and alternative evacuation routes
-              remain unresolved for all missions.
-            </p>
-            <a
-              href={
-                measured
-                  ? 'https://www.hou.usra.edu/meetings/lpsc2023/pdf/2618.pdf'
-                  : mission.source
-              }
-              target="_blank"
-              rel="noreferrer"
-            >
-              Destination reference ↗
-            </a>
-            {measured && available && (
-              <>
-                <h4>Maximum modeled cell slope: {route.maxSlopeDegrees.toFixed(1)}°</h4>
-                <svg
-                  viewBox="0 0 720 140"
-                  role="img"
-                  aria-label={`Elevation from ${minimum.toFixed(0)} to ${maximum.toFixed(0)} meters along candidate`}
-                >
-                  <polyline
-                    points={profilePoints}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-                <p>
-                  Elevation {minimum.toFixed(0)} to {maximum.toFixed(0)} m in the source reference,
-                  samples ordered from base to destination.
-                </p>
-              </>
-            )}
-          </details>
+          <MissionEvidence mission={mission} measured={measured} route={available ? route : null} />
         </section>
         <aside className="task-panel" aria-label="Current exploration task">
           {notebook ? (
@@ -495,72 +408,26 @@ export default function NavigationDemo({
           ) : (
             <>
               {step === 1 && (
-                <>
-                  <p className="eyebrow">{mission.name.toUpperCase()} / SCIENCE TASK</p>
-                  <label>
-                    Exploration objective
-                    <select
-                      value={objectiveIndex}
-                      onChange={(event) => setObjectiveIndex(Number(event.target.value))}
-                    >
-                      {explorations[mission.id]?.map((item, index) => (
-                        <option key={item.name} value={index}>
-                          {item.name} · {item.focus}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <h2>{objective?.name ?? mission.name}</h2>
-                  <p>{objective?.summary ?? mission.description}</p>
-                  <p>
-                    <a href={objective?.source ?? mission.source} target="_blank" rel="noreferrer">
-                      Read the science evidence ↗
-                    </a>
-                  </p>
-                  {briefingImage && (
-                    <figure className="brief-image">
-                      <img
-                        src={
-                          briefingImage.src.endsWith('.gif')
-                            ? '/media/curiosity-route-still.jpg'
-                            : briefingImage.src
-                        }
-                        alt={briefingImage.alt}
-                      />
-                      <figcaption>
-                        {briefingImage.title} · {briefingImage.credit}. Regional reference; not
-                        assumed to show the selected point.{' '}
-                        <a href={briefingImage.source} target="_blank" rel="noreferrer">
-                          Source ↗
-                        </a>
-                      </figcaption>
-                    </figure>
-                  )}
-                  <h3>Your field checklist</h3>
-                  <ul className="science-checklist">
-                    <li>Describe visible surface features relevant to the selected objective.</li>
-                    <li>Record observations and optional photos at simulated positions.</li>
-                    <li>Document uncertainties and update no-go areas before departure.</li>
-                  </ul>
-                  <p className="inline-warning">
-                    Destination: {destinationLabel}.{' '}
-                    {measured
-                      ? 'Published study-site center near the depot, not a sample tube or the exact outcrop named above.'
-                      : 'Approximate mission landing coordinates; the exact science-feature location is not georeferenced. Choose a separate hypothetical base. This is a regional reconnaissance rehearsal.'}
-                  </p>
-                  <button className="primary-action" onClick={() => goToStep(2)}>
-                    Plan the route <span>→</span>
-                  </button>
-                </>
+                <ObjectiveBriefing
+                  mission={mission}
+                  objective={objective}
+                  briefingImage={briefingImage}
+                  objectives={explorations[mission.id] ?? []}
+                  objectiveIndex={objectiveIndex}
+                  setObjectiveIndex={setObjectiveIndex}
+                  measured={measured}
+                  destinationLabel={destinationLabel}
+                  onContinue={() => goToStep(2)}
+                />
               )}
               {step === 2 && (
                 <>
                   <p className="eyebrow">LANDING BASE & TRAVEL</p>
-                  <h2>Make the round trip fit.</h2>
+                  <h2>Plan the round trip</h2>
                   <p>
                     {measured
-                      ? 'The default base is hypothetical, near Perseverance’s landing.'
-                      : 'Choose a hypothetical base distinct from this mission’s landing reference. Draw detour waypoints where needed; terrain clearance is not assessed.'}
+                      ? 'Set a proposed base near Perseverance’s landing.'
+                      : 'Choose a base, then add waypoints. Terrain clearance is unassessed.'}
                   </p>
                   <div className="base-coordinate">
                     {base[1].toFixed(5)}° N · {base[0].toFixed(5)}° E
@@ -793,7 +660,7 @@ export default function NavigationDemo({
               {step === 3 && (
                 <>
                   <p className="eyebrow">PRE-DEPARTURE REVIEW</p>
-                  <h2>A route is only part of the decision.</h2>
+                  <h2>Review your trip</h2>
                   <dl className="review-summary">
                     <div>
                       <dt>Destination</dt>
@@ -833,50 +700,35 @@ export default function NavigationDemo({
                       path.
                     </p>
                     <button
-                      onClick={() => {
-                        const blob = new Blob(
-                          [
-                            JSON.stringify(
-                              {
-                                mission: mission.id,
-                                objective: objective?.name,
-                                destination: destinationLabel,
-                                base,
-                                route: available ? route.path : null,
-                                routeModel: measured
-                                  ? 'measured-jezero-dem'
-                                  : 'manual-unassessed-terrain',
-                                exclusions: zoneState.zones,
-                                assumptions: {
-                                  speedKmh: speed,
-                                  enduranceMinutes: endurance,
-                                  reservePercent: 25,
-                                  scienceMinutes: 30,
-                                  contingencyMinutes: 30,
-                                },
-                                unresolved: [
-                                  'rocks',
-                                  'soil strength',
-                                  'lighting',
-                                  'radiation',
-                                  'communications',
-                                  'evacuation alternatives',
-                                ],
-                                evidence: hazardEvidence[mission.id] ?? [],
-                              },
-                              null,
-                              2,
-                            ),
+                      onClick={() =>
+                        downloadJson(`apollos-${mission.id}-route-review.json`, {
+                          mission: mission.id,
+                          objective: objective?.name,
+                          destination: destinationLabel,
+                          base,
+                          route: available ? route.path : null,
+                          routeModel: measured
+                            ? 'measured-jezero-dem'
+                            : 'manual-unassessed-terrain',
+                          exclusions: zoneState.zones,
+                          assumptions: {
+                            speedKmh: speed,
+                            enduranceMinutes: endurance,
+                            reservePercent: 25,
+                            scienceMinutes: 30,
+                            contingencyMinutes: 30,
+                          },
+                          unresolved: [
+                            'rocks',
+                            'soil strength',
+                            'lighting',
+                            'radiation',
+                            'communications',
+                            'evacuation alternatives',
                           ],
-                          { type: 'application/json' },
-                        );
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `apollos-${mission.id}-route-review.json`;
-                        a.click();
-                        setTimeout(() => URL.revokeObjectURL(url), 1000);
-                      }}
+                          evidence: hazardEvidence[mission.id] ?? [],
+                        })
+                      }
                     >
                       Export route review
                     </button>
@@ -942,15 +794,19 @@ export default function NavigationDemo({
                   </h2>
                   <p role="status">
                     {simulation.phase === 'arrived'
-                      ? 'The clock is paused. Record observations, account for your science stop, then return.'
+                      ? 'Paused at destination. Record discoveries and science time before returning.'
                       : simulation.phase === 'complete'
                         ? 'Review your observations and export the field notebook.'
                         : simulation.playing
-                          ? 'Simulated movement is running.'
-                          : 'Paused. Position and elapsed time are frozen.'}
+                          ? 'Simulation running.'
+                          : 'Simulation paused.'}
                   </p>
+                  <button className="primary-action" onClick={openNotebook}>
+                    {simulation.phase === 'complete' ? 'Open field notebook' : 'Record discovery'}{' '}
+                    <span>＋</span>
+                  </button>
                   <div className={`return-assessment ${returnMargin < 0 ? 'over' : ''}`}>
-                    <span>Return budget headroom</span>
+                    <span>Return time margin</span>
                     <strong>
                       {Math.floor(returnMargin)} <small>min</small>
                     </strong>
@@ -980,12 +836,6 @@ export default function NavigationDemo({
                       {simulation.playing ? 'Pause simulation' : 'Resume simulation'}
                     </button>
                   )}
-                  <button className="primary-action" onClick={openNotebook}>
-                    {simulation.phase === 'complete'
-                      ? 'Open field notebook'
-                      : 'Record an observation'}{' '}
-                    <span>＋</span>
-                  </button>
                   {simulation.phase === 'arrived' && (
                     <button
                       onClick={() =>

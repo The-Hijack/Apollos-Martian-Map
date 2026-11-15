@@ -1,5 +1,6 @@
+import { downloadJson } from '../../utils/downloadJson';
 import { useState, type FormEvent } from 'react';
-import { journalKey, saveNote, type FieldNote } from '../planning/journal.js';
+import { journalKey, saveNote, type FieldNote } from '../../planning/journal.js';
 export default function FieldNotebook({
   missionId,
   missionName,
@@ -105,34 +106,17 @@ export default function FieldNotebook({
     }
   }
   function exportNotes() {
-    const url = URL.createObjectURL(
-      new Blob(
-        [
-          JSON.stringify(
-            {
-              mission: missionName,
-              coordinateSystem: 'Mars east longitude / north latitude, degrees',
-              notes,
-            },
-            null,
-            2,
-          ),
-        ],
-        { type: 'application/json' },
-      ),
-    );
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `apollos-${missionId}-field-notes.json`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    downloadJson(`apollos-${missionId}-field-notes.json`, {
+      mission: missionName,
+      coordinateSystem: 'Mars east longitude / north latitude, degrees',
+      notes,
+    });
   }
+
   return (
     <section className="field-notebook">
-      <h3>Record what you see.</h3>
-      <p className="muted">
-        Saved on this browser only. Photos are not uploaded or shared with your team.
-      </p>
+      <h3>Record discovery</h3>
+      <p className="muted">Stored in this browser. Export to share with your team.</p>
       <form onSubmit={submit}>
         <p className="note-location">
           {context}
@@ -140,7 +124,7 @@ export default function FieldNotebook({
           {coordinate[1].toFixed(5)}° N · {coordinate[0].toFixed(5)}° E
         </p>
         <label>
-          Observation title
+          Discovery title
           <input
             required
             maxLength={100}
@@ -179,7 +163,7 @@ export default function FieldNotebook({
         )}
         {saved && <p role="status">{saved}</p>}
         <button className="primary-action" disabled={loading || !!storageError}>
-          {loading ? 'Reading photo…' : 'Save observation'}
+          {loading ? 'Reading photo…' : 'Save discovery'}
         </button>
       </form>
       <div className="notebook-heading">

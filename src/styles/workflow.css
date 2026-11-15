@@ -638,9 +638,6 @@
   .prototype-label {
     display: none;
   }
-  .exploration-choices {
-    grid-template-columns: 1.3fr 1fr;
-  }
 }
 @media (max-width: 800px) {
   .flight-header {
@@ -661,21 +658,15 @@
   .flight-app main {
     padding: 24px 18px;
   }
-  .home-intro {
-    padding: 8px 0 20px;
-  }
+
   .home-intro h1 {
     letter-spacing: -1px;
   }
-  .exploration-choices {
-    grid-template-columns: 1fr;
-  }
+
   .exploration-choices img {
     height: 190px;
   }
-  .choice-copy {
-    padding: 22px;
-  }
+
   .traverse-layout {
     grid-template-columns: 1fr;
   }
@@ -745,22 +736,6 @@
   }
 }
 
-.home-intro {
-  padding: 10px 0 20px;
-}
-.home-intro .eyebrow {
-  margin-bottom: 12px;
-}
-.home-intro h1 {
-  font-size: clamp(34px, 3.3vw, 48px);
-  margin: 12px 0 15px;
-}
-.home-intro p:last-child {
-  font-size: 14px;
-}
-.exploration-choices img {
-  height: 190px;
-}
 .saved-note .remove-note {
   float: right;
   min-height: 32px;
@@ -777,16 +752,6 @@
   }
 }
 
-.choice-copy select {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin: 12px 0;
-  background: #101a13;
-  color: #eee9dc;
-  border: 1px solid #52604f;
-  border-radius: 5px;
-}
 .exclusion-editor form button {
   margin: 8px 0;
 }
@@ -1184,4 +1149,9 @@
   .distance-guide details {
     margin-left: 0;
   }
+}
+
+.workspace-loading {
+  padding: 40px 4vw;
+  color: var(--quiet);
 }

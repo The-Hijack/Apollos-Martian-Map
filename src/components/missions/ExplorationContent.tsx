@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { media, explorations, type MediaRecord } from '../data/exploration';
+import { media, explorations, type MediaRecord } from '../../data/exploration';
 function MediaCard({ item }: { item: MediaRecord }) {
   const [failed, setFailed] = useState(false),
     [playing, setPlaying] = useState(false);
