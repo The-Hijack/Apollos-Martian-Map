@@ -31,5 +31,29 @@
     "format": "image/png",
     "matrixWidths": [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192],
     "extent": [135.1842593, -6.5732988, 139.2413012, -2.8077809]
+  },
+  {
+    "origin": [-180.0, 90.0],
+    "maxZoom": 16,
+    "id": "sojourner_hirise_mosaic",
+    "tileSize": 256,
+    "capabilities": "https://trek.nasa.gov/tiles/Mars/EQ/sojourner_hirise_mosaic/1.0.0/WMTSCapabilities.xml",
+    "format": "image/png",
+    "matrixWidths": [
+      2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072
+    ],
+    "extent": [-33.2879718, 19.0227898, -33.208734, 19.1598471]
+  },
+  {
+    "origin": [-180.0, 90.0],
+    "maxZoom": 16,
+    "id": "phoenix_hirise_mosaic",
+    "tileSize": 256,
+    "capabilities": "https://trek.nasa.gov/tiles/Mars/EQ/phoenix_hirise_mosaic/1.0.0/WMTSCapabilities.xml",
+    "format": "image/png",
+    "matrixWidths": [
+      2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072
+    ],
+    "extent": [-125.8898226, 68.165978, -125.6607922, 68.2499439]
   }
 ]

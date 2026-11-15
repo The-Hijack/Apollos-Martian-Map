@@ -1,3 +1,5 @@
+import { insightMission } from './insight';
+import { viking1Mission } from './viking1';
 import type { Mission } from '../types';
 export const missions: Mission[] = [
   {
@@ -22,6 +24,52 @@ export const missions: Mission[] = [
     topics: ['Sedimentary layers', 'Ancient environments', 'Mount Sharp'],
     source: 'https://science.nasa.gov/mission/msl-curiosity/',
   },
+  {
+    id: 'pathfinder',
+    name: 'Pathfinder / Sojourner',
+    region: 'Ares Vallis',
+    landingYear: 1997,
+    coordinates: [-33.22, 19.13],
+    description:
+      'Explore the rock-strewn Ares Vallis floodplain, where rounded cobbles, varied rocks, and windblown soil preserve clues to ancient catastrophic floods.',
+    topics: ['Ancient floodplain', 'Rocks and cobbles', 'Flood-deposited terrain'],
+    source: 'https://science.nasa.gov/mission/mars-pathfinder/',
+  },
+  {
+    id: 'phoenix',
+    name: 'Phoenix',
+    region: 'Vastitas Borealis · Northern Polar Plains',
+    landingYear: 2008,
+    coordinates: [-125.75, 68.22],
+    description:
+      'Investigate the arctic plains where Phoenix exposed near-surface water ice, analyzed soil chemistry, and measured polar weather.',
+    topics: ['Subsurface water ice', 'Polar soil chemistry', 'Arctic weather and frost'],
+    source: 'https://science.nasa.gov/mission/mars-phoenix/',
+  },
+  {
+    id: 'spirit',
+    name: 'Spirit',
+    region: 'Gusev Crater',
+    landingYear: 2004,
+    coordinates: [175.4729, -14.5692],
+    description:
+      'Investigate Gusev’s volcanic plains and Columbia Hills for rocks and soils altered by ancient water, including silica-rich deposits.',
+    topics: ['Volcanic terrain', 'Water-altered rocks', 'Columbia Hills'],
+    source: 'https://science.nasa.gov/mission/mer-spirit/',
+  },
+  {
+    id: 'opportunity',
+    name: 'Opportunity',
+    region: 'Meridiani Planum',
+    landingYear: 2004,
+    coordinates: [-5.52583, -1.9483],
+    description:
+      'Explore Meridiani Planum’s craters and rock outcrops for mineral and sedimentary evidence of past water on Mars.',
+    topics: ['Ancient water', 'Crater geology', 'Rock outcrops'],
+    source: 'https://science.nasa.gov/mission/mer-opportunity/',
+  },
+  insightMission,
+  viking1Mission,
 ];
 export const resources = [
   {
@@ -50,11 +98,3 @@ export const resources = [
     url: 'https://mars.nasa.gov/mars2020/multimedia/raw-images/',
   },
 ];
-import { explorations, media } from './exploration';
-import { insightExplorations, insightMedia, insightMission } from './insight';
-import { viking1Explorations, viking1Media, viking1Mission } from './viking1';
-missions.push(insightMission, viking1Mission);
-explorations.insight = insightExplorations;
-explorations.viking1 = viking1Explorations;
-media.insight = insightMedia;
-media.viking1 = viking1Media;
